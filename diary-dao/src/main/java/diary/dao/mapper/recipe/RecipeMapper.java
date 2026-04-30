@@ -85,4 +85,6 @@ public interface RecipeMapper {
      */
     List<RecipePO> selectByAnniversary(@Param("coupleId") Long coupleId,
                                        @Param("date") String date);
+
+    Integer selectByAuthorTitle(Long authorId, String title);
 }

@@ -16,7 +16,7 @@ import diary.dao.mapper.recipe.RecipeStepMapper;
 import diary.dao.mapper.user.UserMapper;
 import jakarta.annotation.Resource;
 import org.springframework.beans.BeanUtils;
-import qcj.diary.diaryrecipe.service.add.RecipeAddService;
+import org.springframework.stereotype.Service;
 import qcj.diary.diaryrecipe.service.query.RecipeQueryService;
 
 import java.util.ArrayList;
@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Service
 public class RecipeQueryServiceImpl implements RecipeQueryService {
     @Resource
     private RecipeMapper recipeMapper;

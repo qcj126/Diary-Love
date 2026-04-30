@@ -35,8 +35,13 @@ public class RecipeAddServiceImpl implements RecipeAddService {
         if (recipeReqDto.getCoupleId() == null || recipeReqDto.getTitle() == null ||
             recipeReqDto.getCategory() == null || recipeReqDto.getMealType() == null ||
             recipeReqDto.getIngredients() == null || recipeReqDto.getSteps() == null) {
-            return ApiResponse.fail(400, "食谱存在必填参数为空");
+            throw new RuntimeException("食谱存在必填参数为空");
         }
+
+        if (recipeMapper.selectByAuthorTitle(recipeReqDto.getAuthorId(), recipeReqDto.getTitle()) > 0) {
+            throw new RuntimeException("该作者已存在同名食谱");
+        }
+
         List<RecipeIngredientAO> ingredients = recipeReqDto.getIngredients();
         ingredients.stream().filter(ingredient -> ingredient.getName() == null || ingredient.getQuantity() == null)
             .findAny().ifPresent(ingredient -> {throw new RuntimeException("食材存在必填参数为空");});
