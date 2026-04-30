@@ -21,4 +21,8 @@ public class ApiResponse<T> {
     public static ApiResponse<Map<String, Object>> success(Map<String, Object> data) {
         return new ApiResponse<>(200, "success", data);
     }
+
+    public static ApiResponse<String> success(String info) {
+        return new ApiResponse<>(200, "success", info);
+    }
 }

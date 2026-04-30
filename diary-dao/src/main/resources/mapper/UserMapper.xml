@@ -37,4 +37,8 @@
     <update id="updatePassword">
         update user set password = #{password} where username = #{username}
     </update>
+
+    <select id="selectByUserId" resultMap="UserResultMap">
+        select <include refid="Base_Column_List"/> from user where user_id = #{userId} and status = '1000'
+    </select>
 </mapper>

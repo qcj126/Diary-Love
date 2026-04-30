@@ -14,4 +14,6 @@ public interface UserMapper {
     int userRegister(User user);
 
     void updatePassword(String username, String encode);
+
+    User selectByUserId(Long userId);
 }
