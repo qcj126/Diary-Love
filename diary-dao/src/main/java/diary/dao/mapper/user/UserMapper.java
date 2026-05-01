@@ -13,7 +13,7 @@ public interface UserMapper {
 
     int userRegister(User user);
 
-    void updatePassword(String username, String encode);
+    void updatePassword(String username, String encodePassword);
 
     User selectByUserId(Long userId);
 }

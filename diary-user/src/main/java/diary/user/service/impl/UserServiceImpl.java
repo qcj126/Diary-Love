@@ -203,7 +203,7 @@ public class UserServiceImpl implements UserService {
         if (userDTO.getPhone() != null)
             user = (SecurityUserDetails) userDetailsService.loadUserByUsername(userDTO.getPhone());
         if (user == null) throw new RuntimeException("用户不存在");
-        userMapper.updatePassword(user.getUsername(), passwordEncoder.encode(userDTO.getPassword()));
+        userMapper.updatePassword(user.getUser().getUsername(), passwordEncoder.encode(userDTO.getPassword()));
         return Map.of(
                 "message", "密码重置成功"
         );

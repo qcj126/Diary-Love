@@ -45,6 +45,7 @@ public class SecurityConfig {
                                 "/user/login",
                                 "/user/register",
                                 "/user/verifycode",
+                                "/user/resetPw",
                                 "/public").permitAll()
                         .anyRequest().authenticated()
                 )
