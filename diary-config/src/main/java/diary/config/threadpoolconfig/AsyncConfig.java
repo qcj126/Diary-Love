@@ -1,4 +1,4 @@
-package diary.file.config.threadpoolconfig;
+package diary.config.threadpoolconfig;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,18 +1,19 @@
-package diary.file.impl;
+package diary.file.impl.asyncserviceImpl;
 
 import com.aliyun.oss.HttpMethod;
 import com.aliyun.oss.OSS;
+import com.aliyun.oss.model.AbortMultipartUploadRequest;
+import com.aliyun.oss.model.CompleteMultipartUploadRequest;
 import com.aliyun.oss.model.GeneratePresignedUrlRequest;
-import diary.file.config.consts.PhotoStatusConst;
-import diary.file.config.consts.PhotoTypeConst;
-import diary.file.config.mqconfig.RabbitMqConfig;
-import diary.file.mapper.PhotoMapper;
-import diary.file.po.OssUploadSuccessMsg;
-import diary.file.po.Photo;
-import diary.file.service.PhotoFileService;
-import diary.file.service.RedisService;
-import diary.file.util.MyOssUtils;
-import diary.file.util.MyUtils;
+import com.aliyun.oss.model.InitiateMultipartUploadRequest;
+import com.aliyun.oss.model.InitiateMultipartUploadResult;
+import com.aliyun.oss.model.PartETag;
+import com.aliyun.oss.model.UploadPartRequest;
+import com.aliyun.oss.model.UploadPartResult;
+import diary.common.entity.file.po.OssUploadSuccessMsg;
+import diary.config.mqconfig.RabbitMqConfig;
+import diary.utils.OSS.OssUtil;
+import diary.file.service.asyncservice.AsyncService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.rabbit.connection.CorrelationData;
@@ -22,7 +23,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -41,19 +41,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.atomic.AtomicInteger;
 
-import static diary.file.util.MyUtils.isEmpty;
-import static diary.file.util.MyUtils.isFileEmpty;
-
-@Slf4j
 @Service
-public class FileServiceImpl implements PhotoFileService {
-    @Resource
-    private PhotoMapper photoMapper;
+@Slf4j
+public class AsyncServiceImpl implements AsyncService {
+    // 分片大小：10MB
+    private static final long PART_SIZE = 10 * 1024 * 1024L;
 
-    @Resource
-    private RedisService redisService;
+    // 大文件阈值：100MB
+    private static final long LARGE_FILE_THRESHOLD = 100 * 1024 * 1024L;
 
     @Resource
     private OSS ossClient;
@@ -64,134 +60,11 @@ public class FileServiceImpl implements PhotoFileService {
     @Resource
     private RabbitTemplate rabbitTemplate;
 
-    @Value("${download.path:C:\\Users\\admin\\Pictures\\Saved Pictures}")
-    private String defaultDownloadPath;
+    @Resource
+    private OssUtil ossUtil;
 
     @Value("${download.timeout:300000}")
     private int timeout;
-
-    @Resource
-    private MyOssUtils myOssUtils;
-
-    @Override
-    public Map<String, Object> addPhotosToDb(List<MultipartFile> files) {
-        if (files == null || files.isEmpty()) {
-            return Map.of("code", 500, "message", "文件列表为空", "data", "null");
-        }
-    
-        List<Photo> photoList = new ArrayList<>();
-        List<String> failedFiles = new ArrayList<>();
-    
-        // 第一步：验证所有文件并构建Photo对象列表
-        for (MultipartFile file : files) {
-            try {
-                if (isFileEmpty(file)) {
-                    failedFiles.add(file.getOriginalFilename() + ": 文件为空");
-                    continue;
-                }
-    
-                // 验证是否为图片类型
-                String photoFormat = file.getContentType();
-                if (isEmpty(photoFormat) || !photoFormat.startsWith("image")) {
-                    try {
-                        if (ImageIO.read(file.getInputStream()) == null) {
-                            failedFiles.add(file.getOriginalFilename() + ": 文件不是图片类型");
-                        }
-                    } catch (Exception e) {
-                        failedFiles.add(file.getOriginalFilename() + ": 文件读取失败");
-                    }
-                    continue;
-                }
-    
-                long id = MyUtils.getPrimaryKey();
-                String photoType = PhotoTypeConst.PHOTO_TYPE_SWEETY;
-                String photoName = file.getOriginalFilename();
-    
-                // 查看同一图片所属类别下是否有相同名称的图片
-                Integer isExist = photoMapper.selectPhotoByTypeAndName(photoType, photoName);
-                if (isExist > 0) {
-                    failedFiles.add(photoName + ": 图片已存在");
-                    continue;
-                }
-    
-                long photoSize = file.getSize();
-                String photoStatus = PhotoStatusConst.PHOTO_STATUS_PROCESSING;
-    
-                // 构建Photo对象（暂不设置sortOrder）
-                Photo photo = new Photo();
-                photo.setId(id);
-                photo.setPhotoType(photoType);
-                photo.setPhotoName(photoName);
-                photo.setPhotoSize(photoSize);
-                photo.setPhotoFormat(photoFormat);
-                photo.setPhotoStatus(photoStatus);
-    
-                photoList.add(photo);
-            } catch (Exception e) {
-                log.error("处理文件 {} 时发生异常", file.getOriginalFilename(), e);
-                failedFiles.add(file.getOriginalFilename() + ": " + e.getMessage());
-            }
-        }
-    
-        // 第二步：分批插入数据库，每批最多20条
-        List<Long> photoIds = new ArrayList<>();
-        int batchSize = 20;
-        int totalSize = photoList.size();
-            
-        for (int i = 0; i < totalSize; i += batchSize) {
-            // 计算当前批次的结束位置
-            int end = Math.min(i + batchSize, totalSize);
-            List<Photo> batchList = photoList.subList(i, end);
-    
-            try {
-                // 获取当前Redis中的图片数量，作为本批次起始序号
-                long currentCount = redisService.getPhotoCount();
-                
-                // 为本批次的Photo设置连续的sortOrder
-                for (int j = 0; j < batchList.size(); j++) {
-                    batchList.get(j).setSortOrder(currentCount + j + 1);
-                }
-                
-                Integer count = photoMapper.batchAddPhotoToDb(batchList);
-                if (count != null && count > 0) {
-                    // 一次性更新Redis：当前数量 + 本批次插入数量
-                    redisService.updatePhotoCount(currentCount + batchList.size());
-                    
-                    // 收集成功插入的id
-                    for (Photo photo : batchList) {
-                        photoIds.add(photo.getId());
-                    }
-                    log.info("批量插入照片成功，批次范围: {} - {}，插入数量: {}，sortOrder范围: {} - {}", 
-                            i + 1, end, count, currentCount + 1, currentCount + batchList.size());
-                } else {
-                    // 记录失败的文件
-                    for (Photo photo : batchList) {
-                        failedFiles.add(photo.getPhotoName() + ": 批量插入失败");
-                    }
-                    log.error("批量插入照片失败，批次范围: {} - {}", i + 1, end);
-                }
-            } catch (Exception e) {
-                log.error("批量插入照片异常，批次范围: {} - {}", i + 1, end, e);
-                // 记录失败的文件
-                for (Photo photo : batchList) {
-                    failedFiles.add(photo.getPhotoName() + ": " + e.getMessage());
-                }
-            }
-        }
-    
-        if (photoIds.isEmpty()) {
-            return Map.of("code", 500, "message", "所有文件处理失败", "data", "null", "failedFiles", failedFiles);
-        }
-    
-        Map<String, Object> result = new HashMap<>();
-        result.put("code", 200);
-        result.put("data", photoIds);
-        if (!failedFiles.isEmpty()) {
-            result.put("failedFiles", failedFiles);
-            result.put("message", "部分文件处理成功");
-        }
-        return result;
-    }
 
     @Async("ossUploadExecutor")
     @Override
@@ -283,88 +156,6 @@ public class FileServiceImpl implements PhotoFileService {
         }
     }
 
-    @Override
-    public Map<String, Object> batchDownloadPhotos(List<String> ossUrls) {
-        if (ossUrls == null || ossUrls.isEmpty()) {
-            return Map.of("code", 500, "message", "URL列表为空", "data", "null");
-        }
-
-        // 确保下载目录存在
-        Path downloadDir = Paths.get(defaultDownloadPath);
-        try {
-            if (!Files.exists(downloadDir)) {
-                Files.createDirectories(downloadDir);
-                log.info("创建下载目录: {}", defaultDownloadPath);
-            }
-        } catch (IOException e) {
-            log.error("创建下载目录失败: {}", defaultDownloadPath, e);
-            return Map.of("code", 500, "message", "创建下载目录失败: " + e.getMessage(), "data", "null");
-        }
-
-        // 用于存储所有下载任务的结果
-        List<CompletableFuture<Map<String, Object>>> futures = new ArrayList<>();
-
-        // 并发计数器
-        AtomicInteger successCount = new AtomicInteger(0);
-        AtomicInteger failCount = new AtomicInteger(0);
-
-        // 提交所有下载任务
-        for (String ossUrl : ossUrls) {
-            CompletableFuture<Map<String, Object>> future = downloadImageAsync(ossUrl, defaultDownloadPath)
-                    .thenApply(result -> {
-                        if ("success".equals(result.get("status"))) {
-                            successCount.incrementAndGet();
-                        } else {
-                            failCount.incrementAndGet();
-                        }
-                        return result;
-                    });
-            futures.add(future);
-        }
-
-        // 等待所有任务完成
-        CompletableFuture<Void> allFutures = CompletableFuture.allOf(
-                futures.toArray(new CompletableFuture[0])
-        );
-
-        try {
-            // 阻塞等待所有任务完成
-            allFutures.join();
-
-            List<String> successFiles = new ArrayList<>();
-            List<String> failedFiles = new ArrayList<>();
-
-            for (CompletableFuture<Map<String, Object>> future : futures) {
-                Map<String, Object> result = future.get();
-
-                String ossUrl = (String) result.get("ossUrl");
-                if ("success".equals(result.get("status"))) {
-                    successFiles.add((String) result.get("filePath"));
-                } else {
-                    failedFiles.add(ossUrl + ": " + result.get("message"));
-                }
-            }
-
-            Map<String, Object> response = new HashMap<>();
-            response.put("code", 200);
-            response.put("message", String.format("下载完成，成功: %d, 失败: %d", successCount.get(), failCount.get()));
-            response.put("total", ossUrls.size());
-            response.put("successCount", successCount.get());
-            response.put("failCount", failCount.get());
-            response.put("successFiles", successFiles);
-            if (!failedFiles.isEmpty()) {
-                response.put("failedFiles", failedFiles);
-            }
-
-            log.info("批量下载完成，总数: {}, 成功: {}, 失败: {}", ossUrls.size(), successCount.get(), failCount.get());
-
-            return response;
-        } catch (Exception e) {
-            log.error("批量下载异常", e);
-            return Map.of("code", 500, "message", "批量下载异常: " + e.getMessage(), "data", "null");
-        }
-    }
-
     @Async("ossDownloadExecutor")
     @Override
     public CompletableFuture<Map<String, Object>> downloadImageAsync(String ossUrl, String savePath) {
@@ -373,7 +164,7 @@ public class FileServiceImpl implements PhotoFileService {
 
         try {
             // 生成签名URL（有效期5分钟）
-            String signedUrl = myOssUtils.generateSignedUrlByKey(ossUrl);
+            String signedUrl = ossUtil.generateSignedUrlByKey(ossUrl);
             log.info("生成签名URL: {}", signedUrl);
 
             // 从签名URL中提取文件名
@@ -412,6 +203,142 @@ public class FileServiceImpl implements PhotoFileService {
         }
 
         return CompletableFuture.completedFuture(result);
+    }
+
+    @Async("ossUploadExecutor")
+    @Override
+    public void uploadAndSendMsgAsync(Map<String, Object> result, MultipartFile file) {
+        // 获取videoId
+        Object dataObj = result.get("data");
+        if (dataObj == null) {
+            log.error("数据库插入失败，result: {}", result);
+            throw new RuntimeException("数据插入DB失败");
+        }
+
+        Long videoId;
+        if (dataObj instanceof Long) {
+            videoId = (Long) dataObj;
+        } else {
+            log.error("未知的数据类型: {}", dataObj.getClass());
+            throw new RuntimeException("数据格式错误");
+        }
+
+        try {
+            // 生成唯一文件名，避免同名覆盖
+            String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+
+            String ossUrl;
+            // 根据文件大小选择上传方式
+            if (file.getSize() > LARGE_FILE_THRESHOLD) {
+                // 大文件使用分片上传
+                ossUrl = multipartUpload(file, fileName);
+            } else {
+                // 小文件使用普通上传
+                ossUrl = simpleUpload(file, fileName);
+            }
+
+            // 构建消息对象
+            OssUploadSuccessMsg msg = new OssUploadSuccessMsg(
+                    videoId, ossUrl, file.getOriginalFilename(), System.currentTimeMillis()
+            );
+
+            // 发送消息到rabbitmq
+            String correlationId = "VIDEO_UPLOAD" + videoId + System.currentTimeMillis();
+            rabbitTemplate.convertAndSend(
+                    RabbitMqConfig.OSS_UPLOAD_EXCHANGE,
+                    RabbitMqConfig.OSS_UPLOAD_ROUTING_KEY,
+                    msg,
+                    new CorrelationData(correlationId)
+            );
+            log.info("视频OSS上传成功，消息已发送，videoId: {}, fileName: {}, correlationId: {}",
+                    videoId, file.getOriginalFilename(), correlationId);
+        } catch (IOException e) {
+            log.error("视频OSS上传失败，videoId: {}, fileName: {}", videoId, file.getOriginalFilename(), e);
+            // 可在此发送上传失败消息到另一个队列
+        } catch (Exception e) {
+            log.error("处理视频文件异常，videoId: {}, fileName: {}", videoId, file.getOriginalFilename(), e);
+        }
+    }
+
+    /**
+     * 简单上传（适用于小文件）
+     */
+    private String simpleUpload(MultipartFile file, String fileName) throws IOException {
+        // 上传文件到OSS
+        ossClient.putObject(bucketName, fileName, file.getInputStream());
+
+        // 生成预签名URL，有效期1小时
+        Date expiration = new Date(System.currentTimeMillis() + 3600 * 1000);
+        GeneratePresignedUrlRequest request = new GeneratePresignedUrlRequest(bucketName, fileName);
+        request.setExpiration(expiration);
+        request.setMethod(com.aliyun.oss.HttpMethod.GET);
+        return ossClient.generatePresignedUrl(request).toString();
+    }
+
+    /**
+     * 分片上传（适用于大文件，支持断点续传）
+     */
+    private String multipartUpload(MultipartFile file, String fileName) throws IOException {
+        String uploadId = null;
+        try {
+            // 1. 初始化分片上传
+            InitiateMultipartUploadRequest initiateRequest = new InitiateMultipartUploadRequest(bucketName, fileName);
+            InitiateMultipartUploadResult initiateResult = ossClient.initiateMultipartUpload(initiateRequest);
+            uploadId = initiateResult.getUploadId();
+
+            // 2. 计算分片数量
+            long contentLength = file.getSize();
+            int partCount = (int) (contentLength / PART_SIZE);
+            if (contentLength % PART_SIZE != 0) {
+                partCount++;
+            }
+
+            // 3. 上传分片
+            List<PartETag> partETags = new ArrayList<>();
+            try (InputStream inputStream = file.getInputStream()) {
+                for (int i = 0; i < partCount; i++) {
+                    // 跳过已上传的分片
+                    long startPos = i * PART_SIZE;
+                    long curPartSize = (i + 1 == partCount) ? (contentLength - startPos) : PART_SIZE;
+
+                    // 创建分片上传请求
+                    UploadPartRequest uploadPartRequest = new UploadPartRequest();
+                    uploadPartRequest.setBucketName(bucketName);
+                    uploadPartRequest.setKey(fileName);
+                    uploadPartRequest.setUploadId(uploadId);
+                    uploadPartRequest.setInputStream(inputStream);
+                    uploadPartRequest.setPartSize(curPartSize);
+                    uploadPartRequest.setPartNumber(i + 1);
+
+                    // 上传分片
+                    UploadPartResult uploadPartResult = ossClient.uploadPart(uploadPartRequest);
+                    partETags.add(uploadPartResult.getPartETag());
+
+                    log.debug("视频分片上传成功，fileName: {}, partNumber: {}/{}", fileName, i + 1, partCount);
+                }
+            }
+
+            // 4. 完成分片上传
+            CompleteMultipartUploadRequest completeRequest = new CompleteMultipartUploadRequest(
+                    bucketName, fileName, uploadId, partETags);
+            ossClient.completeMultipartUpload(completeRequest);
+
+            // 5. 生成预签名URL
+            return ossUtil.getSignedUrlByFileName(fileName);
+        } catch (Exception e) {
+            // 如果上传失败，取消分片上传
+            if (uploadId != null) {
+                try {
+                    AbortMultipartUploadRequest abortRequest = new AbortMultipartUploadRequest(
+                            bucketName, fileName, uploadId);
+                    ossClient.abortMultipartUpload(abortRequest);
+                    log.warn("取消分片上传，fileName: {}, uploadId: {}", fileName, uploadId);
+                } catch (Exception abortEx) {
+                    log.error("取消分片上传失败，fileName: {}, uploadId: {}", fileName, uploadId, abortEx);
+                }
+            }
+            throw new IOException("分片上传失败: " + e.getMessage(), e);
+        }
     }
 
     /**
