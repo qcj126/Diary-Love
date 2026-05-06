@@ -1,4 +1,4 @@
-package diary.config.redis.config.verifycode;
+package diary.dao.redis;
 
 import jakarta.annotation.Resource;
 import org.springframework.data.redis.core.RedisTemplate;

@@ -1,4 +1,4 @@
-package diary.dao.entity.recipe.ao;
+package diary.common.entity.recipe.ao;
 
 import lombok.Data;
 

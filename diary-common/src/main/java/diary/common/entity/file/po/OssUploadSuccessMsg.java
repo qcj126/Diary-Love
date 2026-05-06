@@ -1,4 +1,4 @@
-package diary.file.po;
+package diary.common.entity.file.po;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,15 +1,15 @@
 package diary.gateway;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.ComponentScan;
 
-@Slf4j
 @SpringBootApplication
+@ComponentScan(basePackages = {"diary.gateway", "diary.gateway.cors"})
 public class DiaryGatewayApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(DiaryGatewayApplication.class, args);
-        log.info("Diary Gateway Service 应用已经启动成功");
     }
+
 }

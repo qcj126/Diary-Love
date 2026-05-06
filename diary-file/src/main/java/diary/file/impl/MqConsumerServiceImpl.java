@@ -1,10 +1,10 @@
 package diary.file.impl;
 
 import com.rabbitmq.client.Channel;
-import diary.file.config.consts.PhotoStatusConst;
-import diary.file.config.mqconfig.RabbitMqConfig;
+import diary.common.entity.file.po.OssUploadSuccessMsg;
+import diary.config.consts.PhotoStatusConst;
+import diary.config.mqconfig.RabbitMqConfig;
 import diary.file.mapper.PhotoMapper;
-import diary.file.po.OssUploadSuccessMsg;
 import diary.file.service.MqConsumerService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;

@@ -1,8 +1,8 @@
-package diary.file.util;
+package diary.utils.commonutil;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import diary.file.config.snowflakeconfig.SnowflakeIdConfig;
+import diary.utils.snowflake.SnowflakeIdUtil;
 import org.springframework.web.multipart.MultipartFile;
 
 public class MyUtils {
@@ -11,7 +11,7 @@ public class MyUtils {
 
     public static long getPrimaryKey() {
         // 使用雪花算法
-        return SnowflakeIdConfig.nextId();
+        return SnowflakeIdUtil.nextId();
     }
     
     public static boolean isEmpty(String str) {

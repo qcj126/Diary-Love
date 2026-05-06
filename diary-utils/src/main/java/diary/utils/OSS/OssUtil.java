@@ -1,7 +1,8 @@
-package diary.file.util;
+package diary.utils.OSS;
 
 import com.aliyun.oss.HttpMethod;
 import com.aliyun.oss.OSS;
+import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.model.GeneratePresignedUrlRequest;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -11,15 +12,14 @@ import org.springframework.stereotype.Component;
 import java.net.URI;
 import java.util.Date;
 
-@Slf4j
 @Component
-public class MyOssUtils {
-    @Value("${aliyun.oss.bucket-name}")
-    private String bucketName;
-
+@Slf4j
+public class OssUtil {
     @Resource
     private OSS ossClient;
 
+    @Value("${aliyun.oss.bucket-name}")
+    private String bucketName;
     /**
      * 生成OSS签名URL
      * @param ossUrl OSS URL或object key
@@ -85,4 +85,5 @@ public class MyOssUtils {
 
         return ossClient.generatePresignedUrl(request).toString();
     }
+
 }

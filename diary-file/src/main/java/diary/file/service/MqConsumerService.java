@@ -1,7 +1,7 @@
 package diary.file.service;
 
 import com.rabbitmq.client.Channel;
-import diary.file.po.OssUploadSuccessMsg;
+import diary.common.entity.file.po.OssUploadSuccessMsg;
 import org.springframework.amqp.core.Message;
 
 public interface MqConsumerService {

@@ -1,15 +1,24 @@
-package diary.file.config.ossconfig;
+package diary.config.ossconfig;
 
 import com.aliyun.oss.ClientBuilderConfiguration;
+import com.aliyun.oss.HttpMethod;
 import com.aliyun.oss.OSS;
 import com.aliyun.oss.OSSClientBuilder;
-import com.aliyun.oss.common.auth.CredentialsProvider;
+
 import com.aliyun.oss.common.auth.DefaultCredentialProvider;
 import com.aliyun.oss.common.comm.SignVersion;
+import com.aliyun.oss.common.auth.CredentialsProvider;
+import com.aliyun.oss.model.GeneratePresignedUrlRequest;
+import jakarta.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.net.URI;
+import java.util.Date;
+
+@Slf4j
 @Configuration
 public class OssConfig {
 
@@ -24,10 +33,11 @@ public class OssConfig {
 
     @Value("${aliyun.oss.region}")
     private String region;
+
     @Bean
     public OSS ossClient() {
         // 1. 创建凭证提供者
-        CredentialsProvider credentialsProvider =
+        CredentialsProvider alicredentialsProvider =
                 new DefaultCredentialProvider(accessKeyId, accessKeySecret);
 
         // 2. 配置 V4 签名
@@ -37,8 +47,9 @@ public class OssConfig {
         // 3. 构建 OSS 客户端
         return OSSClientBuilder.create()
                 .endpoint(endpoint)
-                .credentialsProvider(credentialsProvider)
+                .credentialsProvider(alicredentialsProvider)
                 .clientConfiguration(config)
                 .region(region).build();
     }
+
 }
