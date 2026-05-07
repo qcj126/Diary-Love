@@ -26,6 +26,45 @@
         <result column="updated_at" property="updatedAt"/>
     </resultMap>
 
+    <!-- 通用查询条件（可复用） -->
+    <sql id="where_condition">
+        <where>
+            <!-- 数据隔离 -->
+            <if test="req.coupleId != null">
+                AND couple_id = #{req.coupleId}
+            </if>
+            <!-- 状态：已发布 -->
+            AND status = 1
+            <!-- 分类筛选 -->
+            <if test="req.category != null">
+                AND category = #{req.category}
+            </if>
+            <!-- 餐别筛选 -->
+            <if test="req.mealType != null">
+                AND meal_type = #{req.mealType}
+            </if>
+            <!-- 难度筛选 -->
+            <if test="req.difficulty != null">
+                AND difficulty = #{req.difficulty}
+            </if>
+            <!-- 是否纪念日专属 -->
+            <if test="req.isAnniversary != null">
+                AND is_anniversary = #{req.isAnniversary}
+            </if>
+            <!-- 关键词模糊搜索 -->
+            <if test="req.keyword != null and req.keyword != ''">
+                AND title LIKE CONCAT('%', #{req.keyword}, '%')
+            </if>
+            <!-- 时间范围 -->
+            <if test="req.startTime != null">
+                AND created_at >= #{req.startTime}
+            </if>
+            <if test="req.endTime != null">
+                AND created_at &lt;= #{req.endTime}
+            </if>
+        </where>
+    </sql>
+
     <!-- 基础字段 -->
     <sql id="BaseColumns">
         recipe_id, author_id, couple_id, title, cover_img, description,
@@ -152,8 +191,7 @@
     <!-- 浏览量 +1 -->
     <update id="incrementViewCount">
         UPDATE recipe
-        SET view_count = view_count + 1,
-            updated_at = NOW()
+        SET view_count = view_count + 1, updated_at = NOW()
         WHERE recipe_id = #{recipeId}
     </update>
 
@@ -161,8 +199,7 @@
     <update id="batchUpdateLikeCount">
         <foreach collection="list" item="item" separator=";">
             UPDATE recipe
-            SET like_count = #{item.likeCount},
-            updated_at = NOW()
+            SET like_count = #{item.likeCount}, updated_at = NOW()
             WHERE recipe_id = #{item.recipeId}
         </foreach>
     </update>
@@ -180,12 +217,13 @@
 
     <!-- 根据纪念日查询 -->
     <select id="selectByAnniversary" resultMap="BaseResultMap">
-        SELECT <include refid="BaseColumns"/>
+        SELECT
+        <include refid="BaseColumns"/>
         FROM recipe
         WHERE couple_id = #{coupleId}
-        AND is_anniversary = 1
-        AND anniversary_date = #{date}
-        AND status = 1
+            AND is_anniversary = 1
+            AND anniversary_date = #{date}
+            AND status = 1
         ORDER BY created_at DESC
     </select>
 
@@ -193,7 +231,15 @@
         SELECT COUNT(*)
         FROM recipe
         WHERE author_id = #{authorId}
-        AND title = #{title}
-        AND status != 2
+            AND title = #{title}
+            AND meal_type = #{mealType}
+            AND status != 2
+    </select>
+
+    <select id="qryPage" resultMap="BaseResultMap">
+        SELECT <include refid="BaseColumns"/>
+        FROM recipe
+        <include refid="where_condition" />
+        ORDER BY created_at DESC, recipe_id DESC
     </select>
 </mapper>

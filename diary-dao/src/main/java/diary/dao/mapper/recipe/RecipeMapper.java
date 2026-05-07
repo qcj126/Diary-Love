@@ -1,8 +1,11 @@
 package diary.dao.mapper.recipe;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import diary.common.entity.recipe.dto.req.RecipePageReqDto;
 import diary.common.entity.recipe.po.RecipePO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+
 
 import java.util.List;
 
@@ -86,5 +89,7 @@ public interface RecipeMapper {
     List<RecipePO> selectByAnniversary(@Param("coupleId") Long coupleId,
                                        @Param("date") String date);
 
-    Integer selectByAuthorTitle(Long authorId, String title);
+    Integer selectByAuthorTitle(Long authorId, String title, Integer mealType);
+
+    IPage<RecipePO> qryPage(IPage<RecipePO> page, @Param("req") RecipePageReqDto recipePageReqDto);
 }

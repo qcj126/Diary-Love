@@ -1,7 +1,7 @@
 package diary.recipe.impl.delete;
 
 import diary.common.result.ApiResponse;
-import diary.common.entity.recipe.dto.RecipeReqDto;
+import diary.common.entity.recipe.dto.req.RecipeReqDto;
 import org.springframework.stereotype.Service;
 import diary.recipe.service.delete.RecipeDeleteService;
 

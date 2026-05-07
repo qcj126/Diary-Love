@@ -3,7 +3,7 @@ package diary.recipe.impl.add;
 import diary.common.result.ApiResponse;
 import diary.common.entity.recipe.ao.RecipeIngredientAO;
 import diary.common.entity.recipe.ao.RecipeStepAO;
-import diary.common.entity.recipe.dto.RecipeReqDto;
+import diary.common.entity.recipe.dto.req.RecipeReqDto;
 import diary.common.entity.recipe.po.RecipeIngredientPO;
 import diary.common.entity.recipe.po.RecipePO;
 import diary.common.entity.recipe.po.RecipeStepPO;
@@ -37,9 +37,9 @@ public class RecipeAddServiceImpl implements RecipeAddService {
             recipeReqDto.getIngredients() == null || recipeReqDto.getSteps() == null) {
             throw new RuntimeException("食谱存在必填参数为空");
         }
-
-        if (recipeMapper.selectByAuthorTitle(recipeReqDto.getAuthorId(), recipeReqDto.getTitle()) > 0) {
-            throw new RuntimeException("该作者已存在同名食谱");
+        // 同一作者、同一食谱分类下，不能存在相同食谱名称
+        if (recipeMapper.selectByAuthorTitle(recipeReqDto.getAuthorId(), recipeReqDto.getTitle(), recipeReqDto.getMealType()) > 0) {
+            throw new RuntimeException("作者在该分类下已存在同名食谱");
         }
 
         List<RecipeIngredientAO> ingredients = recipeReqDto.getIngredients();
@@ -67,11 +67,11 @@ public class RecipeAddServiceImpl implements RecipeAddService {
         recipePO.setIsAnniversary(recipeReqDto.getIsAnniversary());
         recipePO.setAnniversaryDate(recipeReqDto.getAnniversaryDate());
         recipePO.setStatus(recipeReqDto.getStatus()); // 已发布
-        recipePO.setViewCount(recipePO.getViewCount());
-        recipePO.setLikeCount(recipePO.getLikeCount());
-        recipePO.setCookCount(recipePO.getCookCount());
-        recipePO.setIsAnniversary(recipePO.getIsAnniversary());
-        recipePO.setAnniversaryDate(recipePO.getAnniversaryDate());
+        recipePO.setViewCount(0);
+        recipePO.setLikeCount(0);
+        recipePO.setCookCount(0);
+        recipePO.setIsAnniversary(recipeReqDto.getIsAnniversary());
+        recipePO.setAnniversaryDate(recipeReqDto.getAnniversaryDate());
         recipePO.setCreatedAt(LocalDateTime.now());
         recipePO.setUpdatedAt(LocalDateTime.now());
 

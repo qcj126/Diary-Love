@@ -1,7 +1,12 @@
 package diary.recipe.controller;
 
+import diary.common.entity.recipe.dto.req.PageReqDto;
+import diary.common.entity.recipe.dto.req.RecipePageReqDto;
+import diary.common.entity.recipe.dto.resp.PageRespDto;
+import diary.common.entity.recipe.dto.resp.RecipeRespDto;
+import diary.common.entity.recipe.vo.RecipeVO;
 import diary.common.result.ApiResponse;
-import diary.common.entity.recipe.dto.RecipeReqDto;
+import diary.common.entity.recipe.dto.req.RecipeReqDto;
 import jakarta.annotation.Resource;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -12,6 +17,7 @@ import diary.recipe.service.delete.RecipeDeleteService;
 import diary.recipe.service.query.RecipeQueryService;
 import diary.recipe.service.update.RecipeUpdateService;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -31,11 +37,14 @@ public class RecipeController {
     public ApiResponse<String> addRecipe(@RequestBody RecipeReqDto recipeReqDto) {
         return recipeAddService.addRecipe(recipeReqDto);
     }
-    // 查询食谱
+
+    // 分页查询食谱
     @PostMapping("/query")
-    public ApiResponse<Map<String, Object>> queryRecipe(@RequestBody RecipeReqDto recipeReqDto) {
-        return recipeQueryService.queryRecipe(recipeReqDto);
+    public ApiResponse<PageRespDto<RecipeRespDto>> pageQueryRecipe(@RequestBody RecipePageReqDto recipePageReqDto) {
+        PageRespDto<RecipeRespDto> pagedQueryRecipe = recipeQueryService.pageQueryRecipe(recipePageReqDto);
+        return ApiResponse.success(pagedQueryRecipe);
     }
+
     // 修改食谱
     @PostMapping("/update")
     public ApiResponse<Map<String, Object>> updateRecipe(@RequestBody RecipeReqDto recipeReqDto) {

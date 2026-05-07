@@ -55,6 +55,11 @@
             <artifactId>diary-config</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
+        <dependency>
+            <groupId>diary</groupId>
+            <artifactId>diary-common</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <build>
