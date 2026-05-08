@@ -9,6 +9,8 @@ import diary.common.entity.recipe.dto.resp.PageRespDto;
 import diary.common.entity.recipe.dto.resp.RecipeRespDto;
 
 import diary.common.entity.recipe.po.RecipePO;
+import diary.common.exception.CustomException;
+import diary.common.exception.NullResultException;
 import diary.dao.mapper.recipe.RecipeMapper;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Service;
@@ -24,6 +26,9 @@ public class RecipeQueryServiceImpl implements RecipeQueryService {
         // 若参数全部为空，则默认查询最新的n条数据
         IPage<RecipePO> page = new Page<>(recipePageReqDto.getPageNum(), recipePageReqDto.getPageSize());
         IPage<RecipePO> pageResult = recipeMapper.qryPage(page, recipePageReqDto);
+        if (pageResult == null) {
+            throw new NullResultException("未查出相关数据");
+        }
         IPage<RecipeRespDto> pageResultDto = new Page<>();
         for (RecipePO recipe : pageResult.getRecords()) {
             RecipeRespDto recipeRespDto = RecipeRespDto.fromEntity(recipe);

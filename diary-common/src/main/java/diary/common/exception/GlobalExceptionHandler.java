@@ -28,4 +28,9 @@ public class GlobalExceptionHandler {
     public ApiResponse handleCustomException(CustomException e) {
         return ApiResponse.fail(500, e.getMessage());
     }
+
+    @ExceptionHandler(NullResultException.class)
+    public ApiResponse handleNullResultException(NullResultException e) {
+        return ApiResponse.fail(500, e.getMessage());
+    }
 }
