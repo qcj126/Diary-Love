@@ -1,4 +1,3 @@
-
 spring:
   application:
     name: diary-gateway
@@ -35,46 +34,11 @@ spring:
                   - OPTIONS
                 allowedHeaders: "*"
                 allowCredentials: true
+  main:
+    web-application-type: reactive
 server:
   port: 10000
-
 # JWT configuration
 jwt:
   secret: your256bitsecretkeymustbeatleast32characterslong
   expiration: 7200000 # 2 hours in milliseconds
-
-#gateway:
-#  server:
-#    webflux:
-#      discovery:
-#        locator:
-#          enabled: true
-#          lower-case-service-id: true
-#      routes:
-#        - id: diary-user
-#          uri: http://localhost:8801
-#          predicates:
-#            - Path=/user/**
-#
-#        - id: diary-recipe
-#          uri: http://localhost:8802
-#          predicates:
-#            - Path=/recipe/**
-#
-#        - id: diary-file
-#          uri: http://localhost:8803
-#          predicates:
-#            - Path=/file/**
-#
-#      globalcors:
-#        cors-configurations:
-#          '[/**]':
-#            allowedOriginPatterns: "http://localhost:1025"
-#            allowedMethods:
-#              - GET
-#              - POST
-#              - PUT
-#              - DELETE
-#              - OPTIONS
-#            allowedHeaders: "*"
-#            allowCredentials: true

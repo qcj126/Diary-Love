@@ -26,6 +26,15 @@
         <module name="diary-gateway" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="xxl-job" target="1.8" />
+      <module name="xxl-job-admin" target="1.5" />
+      <module name="xxl-job-admin-master" target="1.8" />
+      <module name="xxl-job-core" target="1.5" />
+      <module name="xxl-job-executor-sample-frameless" target="1.5" />
+      <module name="xxl-job-executor-sample-springboot" target="1.5" />
+      <module name="xxl-job-executor-samples" target="1.5" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">

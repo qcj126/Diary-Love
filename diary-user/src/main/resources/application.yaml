@@ -31,8 +31,15 @@ spring:
     multipart:
       max-file-size: 10MB
       max-request-size: 20MB
-
-
+  main:
+    web-application-type: reactive
+aliyun:
+  oss:
+    endpoint: your               # ??OSS Endpoint
+    access-key-id: your             # ??AccessKey ID
+    access-key-secret: your   # ??AccessKey Secret
+    bucket-name: your                                 # ??Bucket??
+    region: your
 download:
   path: "C:\\Users\\QCJ\\Pictures\\Saved Pictures"  # 默认下载路径
   timeout: 30000  # 下载超时时间（毫秒）

@@ -24,6 +24,7 @@
         <module>diary-gateway</module>
         <module>diary-common</module>
         <module>diary-recipe</module>
+        <module>diary-xxljob</module>
     </modules>
     
     <properties>

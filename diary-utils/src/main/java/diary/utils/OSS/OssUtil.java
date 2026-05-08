@@ -2,7 +2,6 @@ package diary.utils.OSS;
 
 import com.aliyun.oss.HttpMethod;
 import com.aliyun.oss.OSS;
-import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.model.GeneratePresignedUrlRequest;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
