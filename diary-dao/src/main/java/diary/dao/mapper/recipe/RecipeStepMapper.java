@@ -1,5 +1,6 @@
 package diary.dao.mapper.recipe;
 
+import diary.common.entity.recipe.ao.RecipeStepAO;
 import diary.common.entity.recipe.po.RecipeStepPO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -32,4 +33,6 @@ public interface RecipeStepMapper {
      * 根据ID列表删除
      */
     int deleteByIds(@Param("ids") List<Long> ids);
+
+    void batchUpdate(List<RecipeStepAO> steps, Long recipeId);
 }

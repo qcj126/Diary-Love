@@ -39,7 +39,7 @@ public class RecipeAddServiceImpl implements RecipeAddService {
             throw new ParamIllegalException("食谱存在必填参数为空");
         }
         // 同一作者、同一食谱分类下，不能存在相同食谱名称
-        if (recipeMapper.selectByAuthorTitle(recipeReqDto.getAuthorId(), recipeReqDto.getTitle(), recipeReqDto.getMealType()) > 0) {
+        if (recipeMapper.selectByAuthorTitle(recipeReqDto.getAuthorId(), recipeReqDto.getTitle(), recipeReqDto.getMealType()) != null) {
             throw new SameDataException("作者在该分类下已存在同名食谱");
         }
 

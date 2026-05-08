@@ -60,4 +60,24 @@
         </foreach>
     </delete>
 
+    <update id="batchUpdate">
+        <foreach collection="ingredients" item="ingredient" separator=";">
+            UPDATE recipe_ingredient
+            <set>
+                <if test="ingredient.name != null and ingredient.name != ''">
+                    name = #{ingredient.name},
+                </if>
+                <if test="ingredient.quantity != null and ingredient.quantity != ''">
+                    quantity = #{ingredient.quantity},
+                </if>
+                <if test="ingredient.isMain != null">
+                    is_main = #{ingredient.isMain},
+                </if>
+                <if test="ingredient.sortOrder != null">
+                    sort_order = #{ingredient.sortOrder},
+                </if>
+            </set>
+            WHERE recipe_id = #{recipeId} AND sort_order = #{ingredient.sortOrder}
+        </foreach>
+    </update>
 </mapper>

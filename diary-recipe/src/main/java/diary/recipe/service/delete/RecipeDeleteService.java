@@ -6,5 +6,5 @@ import diary.common.result.ApiResponse;
 import java.util.Map;
 
 public interface RecipeDeleteService {
-    ApiResponse<Map<String, Object>> deleteRecipe(RecipeReqDto recipeReqDto);
+    ApiResponse<String> deleteRecipe(RecipeReqDto recipeReqDto);
 }
