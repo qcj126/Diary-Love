@@ -2,6 +2,7 @@ package diary.dao.mapper.recipe;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import diary.common.entity.recipe.dto.req.RecipePageReqDto;
+import diary.common.entity.recipe.dto.req.RecipeReqDto;
 import diary.common.entity.recipe.po.RecipePO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
@@ -20,11 +21,6 @@ public interface RecipeMapper {
      * 根据ID查询
      */
     RecipePO selectById(@Param("recipeId") Long recipeId);
-
-    /**
-     * 根据ID更新（动态更新非空字段）
-     */
-    int updateById(RecipePO recipe);
 
     /**
      * 逻辑删除（修改status）
@@ -76,7 +72,7 @@ public interface RecipeMapper {
     /**
      * 批量更新点赞数（异步汇总用）
      */
-    int batchUpdateLikeCount(@Param("list") List<RecipePO> list);
+    int batchUpdate(@Param("list") List<RecipePO> list);
 
     /**
      * 查询指定ID列表的食谱
@@ -89,7 +85,9 @@ public interface RecipeMapper {
     List<RecipePO> selectByAnniversary(@Param("coupleId") Long coupleId,
                                        @Param("date") String date);
 
-    Integer selectByAuthorTitle(Long authorId, String title, Integer mealType);
+    RecipePO selectByAuthorTitle(Long authorId, String title, Integer mealType);
 
     IPage<RecipePO> qryPage(IPage<RecipePO> page, @Param("req") RecipePageReqDto recipePageReqDto);
+
+    void updateById(RecipeReqDto recipeReqDto, Long recipeId);
 }

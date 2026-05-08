@@ -44,12 +44,12 @@ public class RecipeController {
 
     // 修改食谱
     @PostMapping("/update")
-    public ApiResponse<Map<String, Object>> updateRecipe(@RequestBody RecipeReqDto recipeReqDto) {
+    public ApiResponse<String> updateRecipe(@RequestBody RecipeReqDto recipeReqDto) {
         return recipeUpdateService.updateRecipe(recipeReqDto);
     }
     // 删除食谱
     @PostMapping("/delete")
-    public ApiResponse<Map<String, Object>> deleteRecipe(@RequestBody RecipeReqDto recipeReqDto) {
+    public ApiResponse<String> deleteRecipe(@RequestBody RecipeReqDto recipeReqDto) {
         return recipeDeleteService.deleteRecipe(recipeReqDto);
     }
 }

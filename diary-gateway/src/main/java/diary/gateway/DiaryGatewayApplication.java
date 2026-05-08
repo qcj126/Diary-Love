@@ -5,7 +5,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 
 @SpringBootApplication
-@ComponentScan(basePackages = {"diary.gateway", "diary.gateway.cors"})
+@ComponentScan(basePackages = {"diary.gateway", "diary.utils", "diary.gateway.filter", "diary.gateway.config"})
 public class DiaryGatewayApplication {
 
     public static void main(String[] args) {

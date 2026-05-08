@@ -94,7 +94,7 @@
     </select>
 
     <!-- 根据ID更新（动态SQL） -->
-    <update id="updateById" parameterType="diary.common.entity.recipe.po.RecipePO">
+    <update id="updateById" parameterType="diary.common.entity.recipe.dto.req.RecipeReqDto">
         UPDATE recipe
         <set>
             <if test="title != null">title = #{title},</if>
@@ -226,8 +226,8 @@
         ORDER BY created_at DESC
     </select>
 
-    <select id="selectByAuthorTitle" resultType="java.lang.Integer">
-        SELECT COUNT(*)
+    <select id="selectByAuthorTitle" resultType="diary.common.entity.recipe.po.RecipePO">
+        SELECT <include refid="BaseColumns"/>
         FROM recipe
         WHERE author_id = #{authorId}
             AND title = #{title}
@@ -241,4 +241,8 @@
         <include refid="where_condition" />
         ORDER BY created_at DESC, recipe_id DESC
     </select>
+
+    <update id="batchUpdate">
+
+    </update>
 </mapper>

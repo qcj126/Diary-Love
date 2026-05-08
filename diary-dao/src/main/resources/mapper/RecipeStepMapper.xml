@@ -61,4 +61,21 @@
         </foreach>
     </delete>
 
+    <update id="batchUpdate">
+        <foreach collection="steps" item="step" separator=";">
+            UPDATE recipe_step
+            <set>
+                <if test="step.description != null and step.description != ''">
+                    description = #{item.description},
+                </if>
+                <if test="step.imageUrl != null and step.imageUrl != ''">
+                    image_url = #{item.imageUrl},
+                </if>
+                <if test="step.timerMin != null">
+                    timer_min = #{item.timerMin},
+                </if>
+            </set>
+            WHERE recipe_id = #{recipeId} AND sort_order = #{item.sortOrder}
+        </foreach>
+    </update>
 </mapper>

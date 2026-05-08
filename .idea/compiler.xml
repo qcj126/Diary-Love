@@ -10,6 +10,7 @@
         <module name="diary-user" />
         <module name="diary-common" />
         <module name="diary-dao" />
+        <module name="diary-xxljob" />
         <module name="diary-file" />
         <module name="diary-config" />
         <module name="diary-utils" />
@@ -37,6 +38,7 @@
       <module name="diary-recipe" options="-parameters" />
       <module name="diary-user" options="-parameters" />
       <module name="diary-utils" options="-parameters" />
+      <module name="diary-xxljob" options="-parameters" />
     </option>
   </component>
 </project>
