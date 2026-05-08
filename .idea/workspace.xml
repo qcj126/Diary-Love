@@ -4,20 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f808c6d7-aa71-4ad4-bd8e-7a02c2741024" name="Changes" comment="异常校验">
+    <list default="true" id="f808c6d7-aa71-4ad4-bd8e-7a02c2741024" name="Changes" comment="食谱相关代码">
+      <change afterPath="$PROJECT_DIR$/diary-xxljob/pom.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/diary-xxljob/src/main/java/qcj/diary/diaryxxljob/DiaryXxljobApplication.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/diary-xxljob/src/main/resources/application.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/diary-dao/src/main/java/diary/dao/mapper/recipe/RecipeIngredientMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/diary-dao/src/main/java/diary/dao/mapper/recipe/RecipeIngredientMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/diary-dao/src/main/java/diary/dao/mapper/recipe/RecipeMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/diary-dao/src/main/java/diary/dao/mapper/recipe/RecipeMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/diary-dao/src/main/java/diary/dao/mapper/recipe/RecipeStepMapper.java" beforeDir="false" afterPath="$PROJECT_DIR$/diary-dao/src/main/java/diary/dao/mapper/recipe/RecipeStepMapper.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/diary-dao/src/main/resources/mapper/RecipeIngredientMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/diary-dao/src/main/resources/mapper/RecipeIngredientMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/diary-dao/src/main/resources/mapper/RecipeMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/diary-dao/src/main/resources/mapper/RecipeMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/diary-dao/src/main/resources/mapper/RecipeStepMapper.xml" beforeDir="false" afterPath="$PROJECT_DIR$/diary-dao/src/main/resources/mapper/RecipeStepMapper.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/diary-recipe/src/main/java/diary/recipe/controller/RecipeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/diary-recipe/src/main/java/diary/recipe/controller/RecipeController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/diary-recipe/src/main/java/diary/recipe/impl/add/RecipeAddServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/diary-recipe/src/main/java/diary/recipe/impl/add/RecipeAddServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/diary-recipe/src/main/java/diary/recipe/impl/delete/RecipeDeleteServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/diary-recipe/src/main/java/diary/recipe/impl/delete/RecipeDeleteServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/diary-recipe/src/main/java/diary/recipe/impl/update/RecipeUpdateServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/diary-recipe/src/main/java/diary/recipe/impl/update/RecipeUpdateServiceImpl.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/diary-recipe/src/main/java/diary/recipe/service/delete/RecipeDeleteService.java" beforeDir="false" afterPath="$PROJECT_DIR$/diary-recipe/src/main/java/diary/recipe/service/delete/RecipeDeleteService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/diary-recipe/src/main/java/diary/recipe/service/update/RecipeUpdateService.java" beforeDir="false" afterPath="$PROJECT_DIR$/diary-recipe/src/main/java/diary/recipe/service/update/RecipeUpdateService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/diary-gateway/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/diary-gateway/pom.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -245,6 +240,13 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="DiaryXxljobApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+      <module name="diary-xxljob" />
+      <option name="SPRING_BOOT_MAIN_CLASS" value="qcj.diary.diaryxxljob.DiaryXxljobApplication" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
     <recent_temporary>
       <list>
         <item itemvalue="Spring Boot.DiaryGatewayApplication" />
@@ -291,7 +293,9 @@
       <workItem from="1778206767099" duration="609000" />
       <workItem from="1778207412723" duration="9943000" />
       <workItem from="1778223360030" duration="1032000" />
-      <workItem from="1778224968431" duration="2646000" />
+      <workItem from="1778224968431" duration="2815000" />
+      <workItem from="1778228777167" duration="1399000" />
+      <workItem from="1778233903407" duration="116000" />
     </task>
     <task id="LOCAL-00001" summary="新增食谱功能">
       <option name="closed" value="true" />
@@ -413,7 +417,15 @@
       <option name="project" value="LOCAL" />
       <updated>1778221384180</updated>
     </task>
-    <option name="localTasksCounter" value="16" />
+    <task id="LOCAL-00016" summary="食谱相关代码">
+      <option name="closed" value="true" />
+      <created>1778227647862</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1778227647862</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -427,7 +439,8 @@
     <MESSAGE value="优化返回值" />
     <MESSAGE value="增加非user请求的token校验" />
     <MESSAGE value="异常校验" />
-    <option name="LAST_COMMIT_MESSAGE" value="异常校验" />
+    <MESSAGE value="食谱相关代码" />
+    <option name="LAST_COMMIT_MESSAGE" value="食谱相关代码" />
   </component>
   <component name="github-copilot-workspace">
     <instructionFileLocations>
