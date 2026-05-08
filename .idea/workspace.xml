@@ -6,7 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="f808c6d7-aa71-4ad4-bd8e-7a02c2741024" name="Changes" comment="优化返回值">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/diary-user/src/main/java/diary/user/service/impl/UserServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/diary-user/src/main/java/diary/user/service/impl/UserServiceImpl.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/diary-gateway/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/diary-gateway/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/diary-gateway/src/main/java/diary/gateway/DiaryGatewayApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/diary-gateway/src/main/java/diary/gateway/DiaryGatewayApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/diary-gateway/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/diary-gateway/src/main/resources/application.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/diary-utils/src/main/java/diary/utils/jwt/JwtUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/diary-utils/src/main/java/diary/utils/jwt/JwtUtil.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -278,7 +281,7 @@
       <workItem from="1778120019376" duration="910000" />
       <workItem from="1778120950548" duration="6544000" />
       <workItem from="1778206767099" duration="609000" />
-      <workItem from="1778207412723" duration="5731000" />
+      <workItem from="1778207412723" duration="7522000" />
     </task>
     <task id="LOCAL-00001" summary="新增食谱功能">
       <option name="closed" value="true" />
@@ -368,7 +371,15 @@
       <option name="project" value="LOCAL" />
       <updated>1778212061995</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="优化返回值">
+      <option name="closed" value="true" />
+      <created>1778217381060</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1778217381060</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
